@@ -38,6 +38,14 @@ first normal form. For instance:
 
 ```SELECT 
    accounts.name as company_name,
+   'Denver Metro Media' as publisher,
+   'Advertiser' as company_type,
+   'Denver' as market,
+   'General' as category,
+   '2' as credit_status,
+   'Net 30' as payment_terms,
+   '2' as payment_method,
+   '0' as special_billing,
    SUBSTRING_INDEX(SUBSTRING_INDEX(contacts.name, ' ', 1), ' ', -1) AS first_name,
    TRIM( SUBSTR(contacts.name, LOCATE(' ', contacts.name)) ) AS last_name,
    IF(
@@ -50,20 +58,30 @@ first normal form. For instance:
     SUBSTR(contacts.phone, 1, LOCATE(',', contacts.phone)-1),
     contacts.phone
    ) as phone,
+   '' as phone_extension,
    accounts.address_1 as address_1,
    accounts.address_3 as address_2,
    accounts.city as city,
    accounts.state as state,
    accounts.postalCode as zip,
    accounts.country as country,
+   'MST' as timezone,
+   '' as salutation,
+   '' as username,
+   '' as lead_status,
+   '' as lead_source,
    IF(
     LOCATE(',', accounts.url),
     SUBSTR(accounts.url, 1, LOCATE(',', accounts.url)-1),
     accounts.url
    ) as url,
-   accounts.fax
+   '' as contact_title,
+   '' as middle_name,
+   '' as contact_owner,
+   accounts.fax as fax_number,
+   contacts.tags
 FROM accounts, contacts
-WHERE accounts.contacts = contacts.id LIMIT 1000```
+WHERE accounts.contacts = contacts.id LIMIT 100```
  
 
 
