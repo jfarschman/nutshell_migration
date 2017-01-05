@@ -8,7 +8,10 @@ SELECT
    IF(
     LOCATE(',', contacts.email),
     SUBSTR(contacts.email, 1, LOCATE(',', contacts.email)-1),
-    contacts.email
+    CASE WHEN contacts.email IS NULL or contacts.email = ''
+      THEN 'no-email@denvermetromedia.com'
+      ELSE contacts.email
+    END
    ) as email,
    #IF(
    # LOCATE(',', contacts.phone),
@@ -16,7 +19,7 @@ SELECT
    # TRIM(SUBSTRING_INDEX(contacts.phone, ',',-(CONVERT(char_length(contacts.phone) - char_length(replace(contacts.phone, ',', '')), SIGNED INTEGER)))),
    # contacts.phone
    # ) as primary_phone,
-      IF(
+   IF(
     LOCATE(',', contacts.phone),
     SUBSTR(SUBSTR(contacts.phone, 1, LOCATE(',', contacts.phone)-1),4),
     CASE WHEN contacts.phone IS NULL or contacts.phone = ''
@@ -34,7 +37,7 @@ SELECT
    contacts.postalCode as zip,
    contacts.country as country,
    'MST' as timezone,
-   contacts.fax as fax,
+   SUBSTR(contacts.fax, 4) as fax,
    '0' as update_flag,
    '' as contact_id,
    'Advertiser' as contact_type
