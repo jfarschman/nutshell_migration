@@ -11,8 +11,8 @@ SELECT
    'jill@denvermetromedia.com' as primary_rep,
    '' as primary_contact,
    '' as other_contacts,
-   '2' as credit_status,
-   'Net 30' as payment_terms,
+   '1' as credit_status,          # 1 = pending, 2 = approved
+   'Net 15' as payment_terms,
    '2' as payment_method,
    '0' as special_billing,
    IF(
