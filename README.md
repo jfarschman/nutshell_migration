@@ -61,9 +61,9 @@ it another query.
 
 Then I did the following in Sequel Pro:
 
-# Sort by email address and check any duplicates. Some of there were nearly identical
-# Sort by each individual field and scroll around and look for irregularities.
-# Sort by company_name and make sure you dont have dupes.
+* Sort by email address and check any duplicates. Some of there were nearly identical
+* Sort by each individual field and scroll around and look for irregularities.
+* Sort by company_name and make sure you dont have dupes.
 
 ### Test Import
 By this I mean, take a small (5 record) subset of your data and import it to see
