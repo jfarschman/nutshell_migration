@@ -4,6 +4,13 @@
 
 1. [Overview](#overview)
 2. [Usage - How to Start](#usage)
+    * [Assumptions](#assumptions)
+    * [Exort the Data](#export-the-nutshell-data)
+    * [Create a DB](#create-a-db)
+    * [Normalizing](#normalizing)
+    * [Data Cleaning](#data-cleaning)
+    * [Test Import](#test-import)
+    * [Import it](#import-it)
 3. [Limitations - OS compatibility, etc.](#limitations)
 4. [Contributors](#contributors)
 
@@ -28,62 +35,42 @@ I used "Sequel Pro" to create the database because it lets you simply
 "Import" tables one at a time.  The important tables you will need are
 accounts and contacts.
 
-### Queries
+### Normalizing
 These queries solve a few problems, mostly dealing with violations of
-first normal form. For instance:
+first normal form. I'm not sure if Nutshell uses these internal data structures
+or if it's only on export that they fly in the face of rational data For instance:
 
-* Nutshell keeps firstname and lastname in a fullname field
-* Nutshell keeps multile phone numbers in a single row.
-* etc...
+* firstname and lastname in a single field, fullname.
+* Multile phone numbers in a single row.
+* Extensions in with the phone number (123-456-7890 ext. 123)
+* Multiple URLs (twitter, facebook, linkedIn, website) in one entry
+* Phone numbers include +1 in front of all numbers
 
-```SELECT 
-   accounts.name as company_name,
-   'Denver Metro Media' as publisher,
-   'Advertiser' as company_type,
-   'Denver' as market,
-   'General' as category,
-   '2' as credit_status,
-   'Net 30' as payment_terms,
-   '2' as payment_method,
-   '0' as special_billing,
-   SUBSTRING_INDEX(SUBSTRING_INDEX(contacts.name, ' ', 1), ' ', -1) AS first_name,
-   TRIM( SUBSTR(contacts.name, LOCATE(' ', contacts.name)) ) AS last_name,
-   IF(
-    LOCATE(',', contacts.email),
-    SUBSTR(contacts.email, 1, LOCATE(',', contacts.email)-1),
-    contacts.email
-   ) as email,
-   IF(
-    LOCATE(',', contacts.phone),
-    SUBSTR(contacts.phone, 1, LOCATE(',', contacts.phone)-1),
-    contacts.phone
-   ) as phone,
-   '' as phone_extension,
-   accounts.address_1 as address_1,
-   accounts.address_3 as address_2,
-   accounts.city as city,
-   accounts.state as state,
-   accounts.postalCode as zip,
-   accounts.country as country,
-   'MST' as timezone,
-   '' as salutation,
-   '' as username,
-   '' as lead_status,
-   '' as lead_source,
-   IF(
-    LOCATE(',', accounts.url),
-    SUBSTR(accounts.url, 1, LOCATE(',', accounts.url)-1),
-    accounts.url
-   ) as url,
-   '' as contact_title,
-   '' as middle_name,
-   '' as contact_owner,
-   accounts.fax as fax_number,
-   contacts.tags
-FROM accounts, contacts
-WHERE accounts.contacts = contacts.id LIMIT 100```
- 
+Mostly, the problems were about multiple entries in a single column seperate by 
+commas. If you search around for help with this it's kinda fun because purists 
+are horrified that I built a database in violation of the first and more sacred
+rule. Others are more relaxed and realize we are simply fixing data we inherited
+from some other source.
 
+### Data Cleaning
+This next bit is simply looking for lame data in your resulting, normalized data.
+The best place to start if to run a test import. In my case, the destination 
+offers a test import which can rip through thousands of records and expose any
+widespread problems. In my case, I had omitted a required field and simply added
+it another query.
+
+Then I did the following in Sequel Pro:
+
+# Sort by email address and check any duplicates. Some of there were nearly identical
+# Sort by each individual field and scroll around and look for irregularities.
+# Sort by company_name and make sure you dont have dupes.
+
+### Test Import
+By this I mean, take a small (5 record) subset of your data and import it to see
+what the results look like.
+
+### Import it.
+Just do it.
 
 ## Limitations
 
